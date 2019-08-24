@@ -1,0 +1,80 @@
+[
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[alfred_genaz_3]",
+        "ssm_parameters": [
+        {
+          "name": "/org/member/sharedservices/primary_vpc/az_list",
+          "value": "$[AZ]"
+        }
+      ]
+    },
+    {
+        "ParameterKey": "NumberOfAZs",
+        "ParameterValue": "3"
+    },
+    {
+        "ParameterKey": "CreateAdditionalPrivateSubnets",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "CreatePrivateSubnets",
+        "ParameterValue": "true"
+    },
+    {
+        "ParameterKey": "CreatePublicSubnets",
+        "ParameterValue": "true"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1ACIDR",
+        "ParameterValue": "10.14.0.96/27"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1BCIDR",
+        "ParameterValue": "None"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2ACIDR",
+        "ParameterValue": "10.14.0.128/27"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2BCIDR",
+        "ParameterValue": "None"
+    },
+    {
+        "ParameterKey": "PrivateSubnet3ACIDR",
+        "ParameterValue": "10.14.0.160/27"
+    },
+    {
+        "ParameterKey": "PrivateSubnet3BCIDR",
+        "ParameterValue": "None"
+    },
+    {
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.14.0.0/27"
+    },
+    {
+        "ParameterKey": "PublicSubnet2CIDR",
+        "ParameterValue": "10.14.0.32/27"
+    },
+    {
+        "ParameterKey": "PublicSubnet3CIDR",
+        "ParameterValue": "10.14.0.64/27"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.14.0.0/24"
+    },
+    {
+        "ParameterKey": "TransitVPC",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "LogsRetentionInDays",
+        "ParameterValue": "90"
+    },
+    {
+        "ParameterKey": "ManagedResourcePrefix",
+        "ParameterValue": "aws-landing-zone"
+    }
+]
