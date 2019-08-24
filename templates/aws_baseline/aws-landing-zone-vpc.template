@@ -1,0 +1,680 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template creates a Multi-AZ, multi-subnet VPC infrastructure with
+  managed NAT gateways in the public subnet for each Availability Zone. You can also
+  create additional private subnets with dedicated custom network access control lists
+  (ACLs) - (SO0051).
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Availability Zone Configuration
+        Parameters:
+          - AvailabilityZones
+          - NumberOfAZs
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - VPCCIDR
+          - CreatePublicSubnets
+          - CreatePrivateSubnets
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+          - CreateAdditionalPrivateSubnets
+          - PrivateSubnet1BCIDR
+          - PrivateSubnet2BCIDR
+          - PrivateSubnet3BCIDR
+          - LogsRetentionInDays
+    ParameterLabels:
+      AvailabilityZones:
+        default: Availability Zones
+      CreateAdditionalPrivateSubnets:
+        default: Create additional private subnets with dedicated network ACLs
+      CreatePrivateSubnets:
+        default: Create private subnets
+      CreatePublicSubnets:
+        default: Create public subnets
+      NumberOfAZs:
+        default: Number of Availability Zones
+      PrivateSubnet1ACIDR:
+        default: Private subnet 1A CIDR
+      PrivateSubnet1BCIDR:
+        default: Private subnet 1B with dedicated network ACL CIDR
+      PrivateSubnet2ACIDR:
+        default: Private subnet 2A CIDR
+      PrivateSubnet2BCIDR:
+        default: Private subnet 2B with dedicated network ACL CIDR
+      PrivateSubnet3ACIDR:
+        default: Private subnet 3A CIDR
+      PrivateSubnet3BCIDR:
+        default: Private subnet 3B with dedicated network ACL CIDR
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public subnet 2 CIDR
+      PublicSubnet3CIDR:
+        default: Public subnet 3 CIDR
+      VPCCIDR:
+        default: VPC CIDR
+      LogsRetentionInDays:
+        default: Flow Logs Retention In Days
+Parameters:
+  ManagedResourcePrefix:
+    Type: 'String'
+    Description: 'Prefix for the managed resources'
+  AvailabilityZones:
+    Description: 'List of Availability Zones to use for the subnets in the VPC, Enter as CommaDelimited List.'
+    Type: CommaDelimitedList
+    Default: 'eu-west-1a,eu-west-1b,eu-west-1c'
+  CreateAdditionalPrivateSubnets:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Set to true to create a network ACL protected Database subnet in each Availability
+      Zone. If false, the CIDR parameters for those subnets will be ignored. If true,
+      it also requires that the 'Create private subnets' parameter is also true to
+      have any effect.
+    Type: String
+  CreatePrivateSubnets:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Set to false to create only public subnets. If false, the CIDR parameters
+      for ALL private subnets will be ignored.
+    Type: String
+  CreatePublicSubnets:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Set to false to create only private subnets. If false, the CIDR parameters
+      for ALL public subnets will be ignored.
+    Type: String
+  NumberOfAZs:
+    AllowedValues:
+      - '2'
+      - '3'
+      - '4'
+    Default: '3'
+    Description: Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.
+    Type: String
+  PrivateSubnet1ACIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for private subnet 1A located in Availability Zone 1
+    Type: String
+  PrivateSubnet1BCIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for DBprivate subnet 1B with dedicated network ACL located in Availability Zone 1
+    Type: String
+  PrivateSubnet2ACIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for private subnet 2A located in Availability Zone 2
+    Type: String
+  PrivateSubnet2BCIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for DBprivate subnet 2B with dedicated network ACL located in Availability Zone 2
+    Type: String
+  PrivateSubnet3ACIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for private subnet 3A located in Availability Zone 3
+    Type: String
+  PrivateSubnet3BCIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for DBprivate subnet 3B with dedicated network ACL located in Availability Zone 3
+    Type: String
+  PublicSubnet1CIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for the public DMZ subnet 1 located in Availability Zone 1
+    Type: String
+  PublicSubnet2CIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for the public DMZ subnet 2 located in Availability Zone 2
+    Type: String
+  PublicSubnet3CIDR:
+    Default: 10.14.0.0/28
+    Description: CIDR block for the public DMZ subnet 3 located in Availability Zone 3
+    Type: String
+  VPCCIDR:
+    Default: 10.14.0.0/23
+    Description: CIDR block for the VPC
+    Type: String
+  TransitVPC:
+    Default: 'false'
+    Description: Do you want to connect this VPC to a transit VPC via tagging?
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Type: String
+  LogsRetentionInDays:
+    Description: 'Specifies the number of days you want to retain log events in the specified log group.'
+    Type: Number
+    Default: 90
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]
+Conditions:
+  PublicSubnetsCondition: !Equals [!Ref 'CreatePublicSubnets', 'true']
+  3AZCondition: !Or [!Equals [!Ref 'NumberOfAZs', '3'], !Condition '4AZCondition']
+  4AZCondition: !Equals [!Ref 'NumberOfAZs', '4']
+  3AZPublicCondition: !And [!Condition '3AZCondition', !Condition 'PublicSubnetsCondition']
+  4AZPublicCondition: !And [!Condition '4AZCondition', !Condition 'PublicSubnetsCondition']
+  AdditionalPrivateSubnetsCondition: !And [!Equals [!Ref 'CreatePrivateSubnets', 'true'],
+    !Equals [!Ref 'CreateAdditionalPrivateSubnets', 'true']]
+  AdditionalPrivateSubnets&3AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '3AZCondition']
+  AdditionalPrivateSubnets&4AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '4AZCondition']
+  NATGatewayCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition 'PublicSubnetsCondition']
+  NATGateway&3AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '3AZCondition']
+  NATGateway&4AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '4AZCondition']
+  AdditionalPrivateSubnets&NATGatewayCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition 'NATGatewayCondition']
+  AdditionalPrivateSubnets&NATGateway&3AZCondition: !And [!Condition 'AdditionalPrivateSubnets&3AZCondition', !Condition 'NATGateway&3AZCondition']
+  AdditionalPrivateSubnets&NATGateway&4AZCondition: !And [!Condition 'AdditionalPrivateSubnets&4AZCondition', !Condition 'NATGateway&4AZCondition']
+  NVirginiaRegionCondition: !Equals [!Ref 'AWS::Region', us-east-1]
+  PrivateSubnetsCondition: !Equals [!Ref 'CreatePrivateSubnets', 'true']
+  PrivateSubnets&3AZCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition '3AZCondition']
+  PrivateSubnets&4AZCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition '4AZCondition']
+  Public&PrivateSubnetsCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition']
+  Public&PrivateSubnets&3AZCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition', !Condition '3AZCondition']
+  Public&PrivateSubnets&4AZCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition', !Condition '4AZCondition']
+  S3VPCEndpointCondition: !And [!Condition 'PrivateSubnetsCondition', !Not [!Or [
+        !Equals [!Ref 'AWS::Region', us-gov-west-1], !Equals [!Ref 'AWS::Region',
+          cn-north-1]]]]
+  TransitVPCCondition: !Equals [!Ref 'TransitVPC', 'true']
+Resources:
+  DHCPOptions:
+    Type: AWS::EC2::DHCPOptions
+    DeletionPolicy: Retain
+    Properties:
+      DomainName: !If [NVirginiaRegionCondition, ec2.internal, !Join ['', [!Ref 'AWS::Region',.compute.internal]]]
+      DomainNameServers:
+        - AmazonProvidedDNS
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-DHCPOptionsSet
+  VPC:
+    Type: AWS::EC2::VPC
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: !Ref 'VPCCIDR'
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-VPC
+        - !If
+          - TransitVPCCondition
+          - - Key: transitvpc:spoke
+              Value: true
+          - !Ref 'AWS::NoValue'
+  VPCDHCPOptionsAssociation:
+    Type: AWS::EC2::VPCDHCPOptionsAssociation
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      DhcpOptionsId: !Ref 'DHCPOptions'
+  PrivateSubnet1A:
+    Condition: PrivateSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet1ACIDR'
+      AvailabilityZone: !Select ['0', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PrivateSubnet1A
+        - Key: Network
+          Value: Private
+  PrivateSubnet1B:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet1BCIDR'
+      AvailabilityZone: !Select ['0', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PrivateSubnet1B
+        - Key: Network
+          Value: Private
+  PrivateSubnet2A:
+    Condition: PrivateSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet2ACIDR'
+      AvailabilityZone: !Select ['1', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-Private subnet 2A
+        - Key: Network
+          Value: Private
+  PrivateSubnet2B:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet2BCIDR'
+      AvailabilityZone: !Select ['1', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PrivateSubnet2B
+        - Key: Network
+          Value: Private
+  PrivateSubnet3A:
+    Condition: PrivateSubnets&3AZCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet3ACIDR'
+      AvailabilityZone: !Select ['2', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-Private subnet 3A
+        - Key: Network
+          Value: Private
+  PrivateSubnet3B:
+    Condition: AdditionalPrivateSubnets&3AZCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PrivateSubnet3BCIDR'
+      AvailabilityZone: !Select ['2', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PrivateSubnet3B
+        - Key: Network
+          Value: Private
+  PublicSubnet1:
+    Condition: PublicSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PublicSubnet1CIDR'
+      AvailabilityZone: !Select ['0', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PublicSubnet1
+        - Key: Network
+          Value: Public
+  PublicSubnet2:
+    Condition: PublicSubnetsCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PublicSubnet2CIDR'
+      AvailabilityZone: !Select ['1', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PublicSubnet2
+        - Key: Network
+          Value: Public
+  PublicSubnet3:
+    Condition: 3AZPublicCondition
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      CidrBlock: !Ref 'PublicSubnet3CIDR'
+      AvailabilityZone: !Select ['2', !Ref 'AvailabilityZones']
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PublicSubnet3
+        - Key: Network
+          Value: Public
+  PrivateSubnet1BNetworkAcl:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAcl
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-PrivateSubnet1BNetworkAcl
+        - Key: Network
+          Value: NACL Protected
+  PrivateSubnet1BNetworkAclEntryInbound:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'false'
+      NetworkAclId: !Ref 'PrivateSubnet1BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet1BNetworkAclEntryOutbound:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId: !Ref 'PrivateSubnet1BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet1BNetworkAclAssociation:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    DeletionPolicy: Retain
+    Properties:
+      SubnetId: !Ref 'PrivateSubnet1B'
+      NetworkAclId: !Ref 'PrivateSubnet1BNetworkAcl'
+  PrivateSubnet2BNetworkAcl:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAcl
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-NACL Protected subnet 2
+        - Key: Network
+          Value: NACL Protected
+  PrivateSubnet2BNetworkAclEntryInbound:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'false'
+      NetworkAclId: !Ref 'PrivateSubnet2BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet2BNetworkAclEntryOutbound:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId: !Ref 'PrivateSubnet2BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet2BNetworkAclAssociation:
+    Condition: AdditionalPrivateSubnetsCondition
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    DeletionPolicy: Retain
+    Properties:
+      SubnetId: !Ref 'PrivateSubnet2B'
+      NetworkAclId: !Ref 'PrivateSubnet2BNetworkAcl'
+  PrivateSubnet3BNetworkAcl:
+    Condition: AdditionalPrivateSubnets&3AZCondition
+    Type: AWS::EC2::NetworkAcl
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-NACL Protected subnet 3
+        - Key: Network
+          Value: NACL Protected
+  PrivateSubnet3BNetworkAclEntryInbound:
+    Condition: AdditionalPrivateSubnets&3AZCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'false'
+      NetworkAclId: !Ref 'PrivateSubnet3BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet3BNetworkAclEntryOutbound:
+    Condition: AdditionalPrivateSubnets&3AZCondition
+    Type: AWS::EC2::NetworkAclEntry
+    DeletionPolicy: Retain
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId: !Ref 'PrivateSubnet3BNetworkAcl'
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+  PrivateSubnet3BNetworkAclAssociation:
+    Condition: AdditionalPrivateSubnets&3AZCondition
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    DeletionPolicy: Retain
+    Properties:
+      SubnetId: !Ref 'PrivateSubnet3B'
+      NetworkAclId: !Ref 'PrivateSubnet3BNetworkAcl'
+  PublicSubnetRouteTable:
+    Condition: PublicSubnetsCondition
+    Type: AWS::EC2::RouteTable
+    DeletionPolicy: Retain
+    Properties:
+      VpcId: !Ref 'VPC'
+      Tags:
+        - Key: Name
+          Value: !Sub ${ManagedResourcePrefix}-Public Subnets
+        - Key: Network
+          Value: Public
+      VpcId: !Ref 'VPC'
+  VPCFlowLogsLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      RetentionInDays: !Ref LogsRetentionInDays
+  VPCFlowLogsRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+            reason: "Allow Resource * for CloudWatch Logs API since the resources are customer defined."
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - vpc-flow-logs.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: LogRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                  - logs:PutLogEvents
+                Resource: '*'
+  VPCFlowLog:
+    Type: AWS::EC2::FlowLog
+    DeletionPolicy: Retain
+    Properties:
+        DeliverLogsPermissionArn: !GetAtt 'VPCFlowLogsRole.Arn'
+        LogGroupName: !Ref 'VPCFlowLogsLogGroup'
+        ResourceId: !Ref 'VPC'
+        ResourceType: VPC
+        TrafficType: ALL
+Outputs:
+  PrivateSubnet1ACIDR:
+    Condition: PrivateSubnetsCondition
+    Description: Private subnet 1A CIDR in Availability Zone 1
+    Value: !Ref 'PrivateSubnet1ACIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet1ACIDR'
+  PrivateSubnet1AID:
+    Condition: PrivateSubnetsCondition
+    Description: Private subnet 1A ID in Availability Zone 1
+    Value: !Ref 'PrivateSubnet1A'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet1AID'
+#  PrivateSubnet1BCIDR:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Description: Private subnet 1B CIDR in Availability Zone 1
+#    Value: !Ref 'PrivateSubnet1BCIDR'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BCIDR'
+#  PrivateSubnet1BID:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Description: Private subnet 1B ID in Availability Zone 1
+#    Value: !Ref 'PrivateSubnet1B'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BID'
+  PrivateSubnet2ACIDR:
+    Condition: PrivateSubnetsCondition
+    Description: Private subnet 2A CIDR in Availability Zone 2
+    Value: !Ref 'PrivateSubnet2ACIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet2ACIDR'
+  PrivateSubnet2AID:
+    Condition: PrivateSubnetsCondition
+    Description: Private subnet 2A ID in Availability Zone 2
+    Value: !Ref 'PrivateSubnet2A'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet2AID'
+#  PrivateSubnet2BCIDR:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Description: Private subnet 2B CIDR in Availability Zone 2
+#    Value: !Ref 'PrivateSubnet2BCIDR'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BCIDR'
+#  PrivateSubnet2BID:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Description: Private subnet 2B ID in Availability Zone 2
+#    Value: !Ref 'PrivateSubnet2B'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BID'
+  PrivateSubnet3ACIDR:
+    Condition: PrivateSubnets&3AZCondition
+    Description: Private subnet 3A CIDR in Availability Zone 3
+    Value: !Ref 'PrivateSubnet3ACIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet3ACIDR'
+  PrivateSubnet3AID:
+    Condition: PrivateSubnets&3AZCondition
+    Description: Private subnet 3A ID in Availability Zone 3
+    Value: !Ref 'PrivateSubnet3A'
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet3AID'
+#  PrivateSubnet3BCIDR:
+#    Condition: AdditionalPrivateSubnets&3AZCondition
+#    Description: Private subnet 3B CIDR in Availability Zone 3
+#    Value: !Ref 'PrivateSubnet3BCIDR'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BCIDR'
+#  PrivateSubnet3BID:
+#    Condition: AdditionalPrivateSubnets&3AZCondition
+#    Description: Private subnet 3B ID in Availability Zone 3
+#    Value: !Ref 'PrivateSubnet3B'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BID'
+  PublicSubnet1CIDR:
+    Condition: PublicSubnetsCondition
+    Description: Public subnet 1 CIDR in Availability Zone 1
+    Value: !Ref 'PublicSubnet1CIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet1CIDR'
+  PublicSubnet1ID:
+    Condition: PublicSubnetsCondition
+    Description: Public subnet 1 ID in Availability Zone 1
+    Value: !Ref 'PublicSubnet1'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet1ID'
+  PublicSubnet2CIDR:
+    Condition: PublicSubnetsCondition
+    Description: Public subnet 2 CIDR in Availability Zone 2
+    Value: !Ref 'PublicSubnet2CIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet2CIDR'
+  PublicSubnet2ID:
+    Condition: PublicSubnetsCondition
+    Description: Public subnet 2 ID in Availability Zone 2
+    Value: !Ref 'PublicSubnet2'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet2ID'
+  PublicSubnet3CIDR:
+    Condition: 3AZPublicCondition
+    Description: Public subnet 3 CIDR in Availability Zone 3
+    Value: !Ref 'PublicSubnet3CIDR'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet3CIDR'
+  PublicSubnet3ID:
+    Condition: 3AZPublicCondition
+    Description: Public subnet 3 ID in Availability Zone 3
+    Value: !Ref 'PublicSubnet3'
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet3ID'
+#  S3VPCEndpoint:
+#    Condition: S3VPCEndpointCondition
+#    Description: S3 VPC Endpoint
+#    Value: !Ref 'S3VPCEndpoint'
+#    Export:
+#      Name: !Sub '${AWS::StackName}-S3VPCEndpoint'
+# PrivateSubnet1ARouteTable:
+#   Condition: PrivateSubnetsCondition
+#   Value: !Ref 'PrivateSubnet1ARouteTable'
+#   Description: Private subnet 1A route table
+#   Export:
+#     Name: !Sub '${AWS::StackName}-PrivateSubnet1ARouteTable'
+#  PrivateSubnet1BRouteTable:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Value: !Ref 'PrivateSubnet1BRouteTable'
+#    Description: Private subnet 1B route table
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BRouteTable'
+# PrivateSubnet2ARouteTable:
+#   Condition: PrivateSubnetsCondition
+#   Value: !Ref 'PrivateSubnet2ARouteTable'
+#   Description: Private subnet 2A route table
+#   Export:
+#     Name: !Sub '${AWS::StackName}-PrivateSubnet2ARouteTable'
+#  PrivateSubnet2BRouteTable:
+#    Condition: AdditionalPrivateSubnetsCondition
+#    Value: !Ref 'PrivateSubnet2BRouteTable'
+#    Description: Private subnet 2B route table
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BRouteTable'
+#  PrivateSubnet3ARouteTable:
+#
+#    Condition: PrivateSubnets&3AZCondition
+#
+#    Value: !Ref 'PrivateSubnet3ARouteTable'
+#
+#    Description: Private subnet 3A route table
+#
+#    Export:
+#
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet3ARouteTable'
+#  PrivateSubnet3BRouteTable:
+#    Condition: AdditionalPrivateSubnets&3AZCondition
+#    Value: !Ref 'PrivateSubnet3BRouteTable'
+#    Description: Private subnet 3B route table
+#    Export:
+#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BRouteTable'
+  VPCCIDR:
+    Value: !Ref 'VPCCIDR'
+    Description: VPC CIDR
+    Export:
+      Name: !Sub '${AWS::StackName}-VPCCIDR'
+  VPCID:
+    Value: !Ref 'VPC'
+    Description: VPC ID
+    Export:
+      Name: DefaultVPCId
+  VPCRegion:
+    Value: !Ref AWS::Region
+    Description: VPC Region
