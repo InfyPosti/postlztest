@@ -121,7 +121,7 @@ organizational_units:
   - name: JamesOU
     include_in_baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
-  
+
 # Landing Zone Service Control Policies
 organization_policies:
   - name: aws-landing-zone-core-mandatory-preventive-guardrails
