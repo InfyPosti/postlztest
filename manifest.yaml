@@ -145,7 +145,6 @@ portfolios:
         # This is the skeleton template for the AVM
         skeleton_file: templates/aws_baseline/aws-landing-zone-avm.template.j2
         parameter_file: parameters/aws_baseline/aws-landing-zone-avm.json
-        rules_file: template_constraints/aws-landing-zone-avm-rules.json
         # Hide/Disable the old version of the product in Service Catalog
         hide_old_versions: true
         
