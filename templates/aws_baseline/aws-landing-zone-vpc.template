@@ -104,40 +104,40 @@ Parameters:
     Description: Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.
     Type: String
   PrivateSubnet1ACIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for private subnet 1A located in Availability Zone 1
+    
+    Description: CIDR block for private subnet 1A located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet1BCIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for DBprivate subnet 1B with dedicated network ACL located in Availability Zone 1
+    
+    Description: CIDR block for DBprivate subnet 1B with dedicated network ACL located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2ACIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for private subnet 2A located in Availability Zone 2
+    
+    Description: CIDR block for private subnet 2A located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2BCIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for DBprivate subnet 2B with dedicated network ACL located in Availability Zone 2
+    
+    Description: CIDR block for DBprivate subnet 2B with dedicated network ACL located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3ACIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for private subnet 3A located in Availability Zone 3
+    
+    Description: CIDR block for private subnet 3A located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3BCIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for DBprivate subnet 3B with dedicated network ACL located in Availability Zone 3
+    
+    Description: CIDR block for DBprivate subnet 3B with dedicated network ACL located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet1CIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for the public DMZ subnet 1 located in Availability Zone 1
+    
+    Description: CIDR block for the public DMZ subnet 1 located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet2CIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for the public DMZ subnet 2 located in Availability Zone 2
+    
+    Description: CIDR block for the public DMZ subnet 2 located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet3CIDR:
-    Default: 10.14.0.0/28
-    Description: CIDR block for the public DMZ subnet 3 located in Availability Zone 3
+    
+    Description: CIDR block for the public DMZ subnet 3 located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   VPCCIDR:
     Default: 10.14.0.0/23
@@ -163,8 +163,8 @@ Conditions:
   4AZPublicCondition: !And [!Condition '4AZCondition', !Condition 'PublicSubnetsCondition']
   AdditionalPrivateSubnetsCondition: !And [!Equals [!Ref 'CreatePrivateSubnets', 'true'],
     !Equals [!Ref 'CreateAdditionalPrivateSubnets', 'true']]
-  AdditionalPrivateSubnets&3AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition',!Condition '3AZCondition']
-  AdditionalPrivateSubnets&4AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition',!Condition '4AZCondition']
+  AdditionalPrivateSubnets&3AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '3AZCondition']
+  AdditionalPrivateSubnets&4AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '4AZCondition']
   NATGatewayCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition 'PublicSubnetsCondition']
   NATGateway&3AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '3AZCondition']
   NATGateway&4AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '4AZCondition']
@@ -522,18 +522,7 @@ Outputs:
     Value: !Ref 'PrivateSubnet1A'
     Export:
       Name: !Sub '${AWS::StackName}-PrivateSubnet1AID'
-#  PrivateSubnet1BCIDR:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Description: Private subnet 1B CIDR in Availability Zone 1
-#    Value: !Ref 'PrivateSubnet1BCIDR'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BCIDR'
-#  PrivateSubnet1BID:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Description: Private subnet 1B ID in Availability Zone 1
-#    Value: !Ref 'PrivateSubnet1B'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BID'
+
   PrivateSubnet2ACIDR:
     Condition: PrivateSubnetsCondition
     Description: Private subnet 2A CIDR in Availability Zone 2
@@ -546,18 +535,7 @@ Outputs:
     Value: !Ref 'PrivateSubnet2A'
     Export:
       Name: !Sub '${AWS::StackName}-PrivateSubnet2AID'
-#  PrivateSubnet2BCIDR:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Description: Private subnet 2B CIDR in Availability Zone 2
-#    Value: !Ref 'PrivateSubnet2BCIDR'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BCIDR'
-#  PrivateSubnet2BID:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Description: Private subnet 2B ID in Availability Zone 2
-#    Value: !Ref 'PrivateSubnet2B'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BID'
+
   PrivateSubnet3ACIDR:
     Condition: PrivateSubnets&3AZCondition
     Description: Private subnet 3A CIDR in Availability Zone 3
@@ -570,18 +548,7 @@ Outputs:
     Value: !Ref 'PrivateSubnet3A'
     Export:
       Name: !Sub '${AWS::StackName}-PrivateSubnet3AID'
-#  PrivateSubnet3BCIDR:
-#    Condition: AdditionalPrivateSubnets&3AZCondition
-#    Description: Private subnet 3B CIDR in Availability Zone 3
-#    Value: !Ref 'PrivateSubnet3BCIDR'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BCIDR'
-#  PrivateSubnet3BID:
-#    Condition: AdditionalPrivateSubnets&3AZCondition
-#    Description: Private subnet 3B ID in Availability Zone 3
-#    Value: !Ref 'PrivateSubnet3B'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BID'
+
   PublicSubnet1CIDR:
     Condition: PublicSubnetsCondition
     Description: Public subnet 1 CIDR in Availability Zone 1
@@ -618,53 +585,7 @@ Outputs:
     Value: !Ref 'PublicSubnet3'
     Export:
       Name: !Sub '${AWS::StackName}-PublicSubnet3ID'
-#  S3VPCEndpoint:
-#    Condition: S3VPCEndpointCondition
-#    Description: S3 VPC Endpoint
-#    Value: !Ref 'S3VPCEndpoint'
-#    Export:
-#      Name: !Sub '${AWS::StackName}-S3VPCEndpoint'
-# PrivateSubnet1ARouteTable:
-#   Condition: PrivateSubnetsCondition
-#   Value: !Ref 'PrivateSubnet1ARouteTable'
-#   Description: Private subnet 1A route table
-#   Export:
-#     Name: !Sub '${AWS::StackName}-PrivateSubnet1ARouteTable'
-#  PrivateSubnet1BRouteTable:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Value: !Ref 'PrivateSubnet1BRouteTable'
-#    Description: Private subnet 1B route table
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet1BRouteTable'
-# PrivateSubnet2ARouteTable:
-#   Condition: PrivateSubnetsCondition
-#   Value: !Ref 'PrivateSubnet2ARouteTable'
-#   Description: Private subnet 2A route table
-#   Export:
-#     Name: !Sub '${AWS::StackName}-PrivateSubnet2ARouteTable'
-#  PrivateSubnet2BRouteTable:
-#    Condition: AdditionalPrivateSubnetsCondition
-#    Value: !Ref 'PrivateSubnet2BRouteTable'
-#    Description: Private subnet 2B route table
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet2BRouteTable'
-#  PrivateSubnet3ARouteTable:
-#
-#    Condition: PrivateSubnets&3AZCondition
-#
-#    Value: !Ref 'PrivateSubnet3ARouteTable'
-#
-#    Description: Private subnet 3A route table
-#
-#    Export:
-#
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet3ARouteTable'
-#  PrivateSubnet3BRouteTable:
-#    Condition: AdditionalPrivateSubnets&3AZCondition
-#    Value: !Ref 'PrivateSubnet3BRouteTable'
-#    Description: Private subnet 3B route table
-#    Export:
-#      Name: !Sub '${AWS::StackName}-PrivateSubnet3BRouteTable'
+
   VPCCIDR:
     Value: !Ref 'VPCCIDR'
     Description: VPC CIDR
