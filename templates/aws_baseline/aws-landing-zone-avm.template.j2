@@ -30,6 +30,7 @@ Parameters:
     Description: VPC options
     AllowedValues:
       - No-Primary-VPC
+      - Private-Only-3-AZ
       - Public-and-2-Private-Subnets-3-AZ
   VPCRegion:
     Description: VPC Region
@@ -85,6 +86,16 @@ Metadata:
         default: Network Region
 Mappings:
   VPC:
+    Private-Only-3-AZ:
+      AvailabilityZones: 3
+      PublicSubnets: []
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'false'
     Public-and-2-Private-Subnets-3-AZ:
       AvailabilityZones: 3
       PublicSubnets:
