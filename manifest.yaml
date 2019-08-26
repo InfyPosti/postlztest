@@ -234,8 +234,6 @@ baseline_resources:
   - name: PrimaryVPC
     baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
-    depends_on:
-      - VPCCalculator
     template_file: templates/aws_baseline/aws-landing-zone-vpc.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-primary-vpc.json
     deploy_method: stack_set
