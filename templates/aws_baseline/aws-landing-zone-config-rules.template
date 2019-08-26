@@ -163,6 +163,13 @@ Parameters:
     AllowedValues:
     - true
     - false
+  IamPassword:
+    Type: String
+    Description: "Enables the AWS managed Root Account Mfa Enabled config rule. To disable, change the parameter value to false."
+    Default: true
+    AllowedValues:
+    - true
+    - false
   RootAccountMfaEnabled:
     Type: String
     Description: "Enables the AWS managed Root Account Mfa Enabled config rule. To disable, change the parameter value to false."
@@ -329,6 +336,34 @@ Parameters:
     Description: The name that you assign to the AWS Config rule.
     MinLength: '1'
     ConstraintDescription: This parameter is required.
+  RequireUppercaseCharacters:
+    Type: String
+    Default: 'true'
+    Description: Require at least one uppercase character in password.
+  RequireLowercaseCharacters:
+    Type: String
+    Default: 'true'
+    Description: Require at least one lowercase character in password.
+  RequireSymbols:
+    Type: String
+    Default: 'true'
+    Description: Require at least one symbol in password.
+  RequireNumbers:
+    Type: String
+    Default: 'true'
+    Description: Require at least one number in password.
+  MinimumPasswordLength:
+    Type: String
+    Default: '14'
+    Description: Password minimum length.
+  PasswordReusePrevention:
+    Type: String
+    Default: '24'
+    Description: Number of passwords before allowing reuse.
+  MaxPasswordAge:
+    Type: String
+    Default: '90'
+    Description: Number of days before password expiration.
 
 Conditions:
   EnableEncryptedVolumes: !Equals
@@ -402,6 +437,9 @@ Conditions:
     - 'true'
   RootAccountMfaEnabledPolicy: !Equals
     - !Ref RootAccountMfaEnabled
+    - 'true'
+  IamPasswordPolicy: !Equals
+    - !Ref IamPassword
     - 'true'
   HasKMSKeyId: !Not
     - !Equals
@@ -572,6 +610,34 @@ Conditions:
     - Fn::Equals:
       - ''
       - Ref: action2
+  RequireUppercaseCharacters: !Not 
+    - !Equals 
+      - ''
+      - !Ref RequireUppercaseCharacters
+  RequireLowercaseCharacters: !Not 
+    - !Equals 
+      - ''
+      - !Ref RequireLowercaseCharacters
+  RequireSymbols: !Not 
+    - !Equals 
+      - ''
+      - !Ref RequireSymbols
+  RequireNumbers: !Not 
+    - !Equals 
+      - ''
+      - !Ref RequireNumbers
+  MinimumPasswordLength: !Not 
+    - !Equals 
+      - ''
+      - !Ref MinimumPasswordLength
+  PasswordReusePrevention: !Not 
+    - !Equals 
+      - ''
+      - !Ref PasswordReusePrevention
+  MaxPasswordAge: !Not 
+    - !Equals 
+      - ''
+      - !Ref MaxPasswordAge
    
 Metadata:
   AWS::CloudFormation::Interface:
@@ -603,6 +669,7 @@ Metadata:
       - S3BucketLoggingEnabledRule
       - CloudwatchAlarmActionCheck
       - RootAccountMfaEnabled
+	  - IamPassword
     - Label:
         default: Misc Parameters
       Parameters:
@@ -1134,5 +1201,46 @@ Resources:
         SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
       MaximumExecutionFrequency:
         Ref: MaximumExecutionFrequency
+  CheckIamPasswordPolicy:
+    Type: AWS::Config::ConfigRule
+    Condition: IamPasswordPolicy
+    Properties:
+      Description:         Checks whether the account password policy for IAM users meets the
+        specified requirements.
+        authentication for console sign-in.
+      InputParameters:
+        RequireUppercaseCharacters: !If 
+          - RequireUppercaseCharacters
+          - !Ref RequireUppercaseCharacters
+          - !Ref 'AWS::NoValue'
+        RequireLowercaseCharacters: !If 
+          - RequireLowercaseCharacters
+          - !Ref RequireLowercaseCharacters
+          - !Ref 'AWS::NoValue'
+        RequireSymbols: !If 
+          - RequireSymbols
+          - !Ref RequireSymbols
+          - !Ref 'AWS::NoValue'
+        RequireNumbers: !If 
+          - RequireNumbers
+          - !Ref RequireNumbers
+          - !Ref 'AWS::NoValue'
+        MinimumPasswordLength: !If 
+          - MinimumPasswordLength
+          - !Ref MinimumPasswordLength
+          - !Ref 'AWS::NoValue'
+        PasswordReusePrevention: !If 
+          - PasswordReusePrevention
+          - !Ref PasswordReusePrevention
+          - !Ref 'AWS::NoValue'
+        MaxPasswordAge: !If 
+          - MaxPasswordAge
+          - !Ref MaxPasswordAge
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      MaximumExecutionFrequency: !Ref MaximumExecutionFrequency
 
 
