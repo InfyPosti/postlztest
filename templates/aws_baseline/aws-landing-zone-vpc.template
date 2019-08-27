@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This template creates a Multi-AZ, multi-subnet VPC infrastructure with
-  managed NAT gateways in the public subnet for each Availability Zone. You can also
+  managed public subnet for each Availability Zone. You can also
   create additional private subnets with dedicated custom network access control lists
   (ACLs) - (SO0051).
 Metadata:

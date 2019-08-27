@@ -46,13 +46,6 @@ Parameters:
       ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
       Description: CIDR block for the VPC
       Default: 10.14.0.0/22
-  PeerVPC:
-      Type: String
-      Default: No
-      AllowedValues:
-        - Yes
-        - No
-      Description: Would you like to peer this account's Primary VPC's Private Subnets with the Shared Service VPC's Private Subnets?
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -67,8 +60,7 @@ Metadata:
         Parameters:
           - VPCOptions
           - VPCRegion
-          - VPCCidr
-          - PeerVPC
+          - VPCCidr         
     ParameterLabels:
       AccountName:
         default: Account Name
@@ -80,8 +72,6 @@ Metadata:
         default: Network Type
       VPCCidr:
         default: Network CIDR Range
-      PeerVPC:
-        default: Peer with Shared-Services VPC
       VPCRegion:
         default: Network Region
 Mappings:
@@ -118,9 +108,6 @@ Conditions:
     - !Equals
       - !Ref VPCOptions
       - No-Primary-VPC
-  PeerVPC: !Equals
-      - !Ref PeerVPC
-      - Yes
 Resources:
 #
 # Check if AVM was run for this account before
@@ -305,50 +292,7 @@ Resources:
           - !GetAtt 'Organizations.AccountId'
         Region: !Ref VPCRegion
         ServiceToken: {{ lambda_arn }}
-#
-# VPC Custom Resource - Peering
-#
-  VPCPeeringCR:
-    Condition: PeerVPC
-    Type: Custom::HandShakeStateMachine
-    DependsOn:
-      - StackSetPrimaryVPC
-    Properties:
-      ServiceType: VPCPeering
-      HubAccountId: !GetAtt 'SSMGetParameters./org/member/sharedservices/account_id'
-      HubRegion: !GetAtt 'SSMGetParameters./org/member/sharedservices/vpc_region'
-      HubVPCId: !GetAtt 'SSMGetParameters./org/member/sharedservices/vpc_id'
-      SpokeAccountId: !GetAtt 'Organizations.AccountId'
-      SpokeVPCId: !GetAtt 'StackSetPrimaryVPC.output_vpcid'
-      SpokeRegion: !Ref VPCRegion
-      ServiceToken: {{ lambda_arn }}
-#
-# VPC Custom Resource - Peer Routing
-#
-  NewVPCPeerRouting:
-    Condition: PeerVPC
-    Type: Custom::VPCPeering
-    DependsOn:
-      - StackSetPrimaryVPC
-      - VPCPeeringCR
-    Properties:
-      AccountID : !GetAtt 'Organizations.AccountId'
-      Region: !Ref VPCRegion
-      PeerConnectionID : !GetAtt 'VPCPeeringCR.ConnectionId'
-      VPCCIDR: !GetAtt 'VPCPeeringCR.HubVPCCIDR'
-      ServiceToken: {{ lambda_arn }}
-  SharedVPCPeerRouting:
-    Condition: PeerVPC
-    Type: Custom::VPCPeering
-    DependsOn:
-      - StackSetPrimaryVPC
-      - VPCPeeringCR
-    Properties:
-      AccountID: !GetAtt 'SSMGetParameters./org/member/sharedservices/account_id'
-      Region: !GetAtt 'SSMGetParameters./org/member/sharedservices/vpc_region'
-      PeerConnectionID : !GetAtt 'VPCPeeringCR.ConnectionId'
-      VPCCIDR: !GetAtt 'VPCPeeringCR.SpokeVPCCIDR'
-      ServiceToken: {{ lambda_arn }}
+
 Outputs:
   AccountName:
     Description: Account Name
