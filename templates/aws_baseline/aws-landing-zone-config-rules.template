@@ -367,8 +367,7 @@ Parameters:
   MaxPasswordAge:
     Type: String
     Default: '90'
-    Description: Number of days before password expiration.
-	
+    Description: Number of days before password expiration.	
 Conditions:
   EnableEncryptedVolumes: !Equals
     - !Ref EnableEncryptedVolumesRule
@@ -628,8 +627,7 @@ Conditions:
   MaxPasswordAge: !Not 
     - !Equals 
       - ''
-      - !Ref MaxPasswordAge
-	  
+      - !Ref MaxPasswordAge	  
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -660,15 +658,8 @@ Metadata:
       - S3BucketLoggingEnabledRule
       - CloudwatchAlarmActionCheck
       - RootAccountMfaEnabled
-    - Label:
-        default: Misc Parameters
-      Parameters:
-      - KMSId
-      - MaximumExecutionFrequency
-    
-	- Label:
-        default: Restricted Common Ports
-      Parameters:
+	  - KMSId
+      - MaximumExecutionFrequency    
       - blockedPort1
       - blockedPort2
       - blockedPort3
@@ -678,18 +669,7 @@ Metadata:
       - tag2Key
       - tag3Key
       - tag4Key
-      - tag5Key
-      
-	  - Label:
-          default: Optional
-        Parameters:
-          - RequireUppercaseCharacters
-          - RequireLowercaseCharacters
-          - RequireSymbols
-          - RequireNumbers
-          - MinimumPasswordLength
-          - PasswordReusePrevention
-          - MaxPasswordAge
+      - tag5Key      
 Resources:
   CheckForEncryptedVolumes:
     Type: AWS::Config::ConfigRule
