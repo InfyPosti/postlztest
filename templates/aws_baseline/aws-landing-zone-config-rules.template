@@ -249,27 +249,23 @@ Parameters:
     Description: Blocked TCP port number.
   tag1Key:
     Type: String
-    Default: 'Application Name'
+    Default: 'Name'
     Description: tagging key .
   tag2Key:
     Type: String
-    Default: 'Cost Center'
+    Default: 'ApplicationName'
     Description: tagging key .
   tag3Key:
     Type: String
-    Default: 'Work Number'
+    Default: 'ApplicationId'
     Description: tagging key .
   tag4Key:
     Type: String
-    Default: 'DailyVolumeBackup'
+    Default: 'CostCenter'
     Description: tagging key .
   tag5Key:
     Type: String
-    Default: 'Application Solution Manager'
-    Description: tagging key .
-  tag6Key:
-    Type: String
-    Default: 'Application Service Manager'
+    Default: 'Environment'
     Description: tagging key .
   trafficType:
     Type: String
@@ -482,11 +478,6 @@ Conditions:
     - Fn::Equals:
       - ''
       - Ref: tag5Key
-  tag6Key:
-    Fn::Not:
-    - Fn::Equals:
-      - ''
-      - Ref: tag6Key
   s3BucketName:
     Fn::Not:
     - Fn::Equals:
@@ -621,7 +612,6 @@ Metadata:
       - tag3Key
       - tag4Key
       - tag5Key
-      - tag6Key
 Resources:
   CheckForEncryptedVolumes:
     Type: AWS::Config::ConfigRule
@@ -955,11 +945,6 @@ Resources:
           Fn::If:
           - tag5Key
           - Ref: tag5Key
-          - Ref: AWS::NoValue
-        tag6Key:
-          Fn::If:
-          - tag6Key
-          - Ref: tag6Key
           - Ref: AWS::NoValue
       Scope:
         ComplianceResourceTypes:
