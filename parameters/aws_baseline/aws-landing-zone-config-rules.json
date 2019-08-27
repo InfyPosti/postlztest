@@ -184,10 +184,6 @@
     "ParameterValue": "Application Solution Manager"
   },
   {
-    "ParameterKey": "tag6Key",
-    "ParameterValue": "Application Service Manager"
-  },
-  {
     "ParameterKey": "trafficType",
     "ParameterValue": "ALL"
   },

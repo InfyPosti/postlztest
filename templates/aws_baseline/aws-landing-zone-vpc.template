@@ -42,15 +42,15 @@ Metadata:
       PrivateSubnet1ACIDR:
         default: Private subnet 1A CIDR
       PrivateSubnet1BCIDR:
-        default: Private subnet 1B with dedicated network ACL CIDR
+        default: DBprivate subnet 1B with dedicated network ACL CIDR
       PrivateSubnet2ACIDR:
         default: Private subnet 2A CIDR
       PrivateSubnet2BCIDR:
-        default: Private subnet 2B with dedicated network ACL CIDR
+        default: DBprivate subnet 2B with dedicated network ACL CIDR
       PrivateSubnet3ACIDR:
         default: Private subnet 3A CIDR
       PrivateSubnet3BCIDR:
-        default: Private subnet 3B with dedicated network ACL CIDR
+        default: DBprivate subnet 3B with dedicated network ACL CIDR
       PublicSubnet1CIDR:
         default: Public subnet 1 CIDR
       PublicSubnet2CIDR:
@@ -104,39 +104,39 @@ Parameters:
     Description: Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.
     Type: String
   PrivateSubnet1ACIDR:
-    
+    Default: 
     Description: CIDR block for private subnet 1A located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet1BCIDR:
-    
+    Default: 
     Description: CIDR block for DBprivate subnet 1B with dedicated network ACL located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2ACIDR:
-    
+    Default: 
     Description: CIDR block for private subnet 2A located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2BCIDR:
-    
+    Default: 
     Description: CIDR block for DBprivate subnet 2B with dedicated network ACL located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3ACIDR:
-    
+    Default: 
     Description: CIDR block for private subnet 3A located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3BCIDR:
-    
+    Default: 
     Description: CIDR block for DBprivate subnet 3B with dedicated network ACL located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet1CIDR:
-    
+    Default: 
     Description: CIDR block for the public DMZ subnet 1 located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet2CIDR:
-    
+    Default: 
     Description: CIDR block for the public DMZ subnet 2 located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet3CIDR:
-    
+    Default: 
     Description: CIDR block for the public DMZ subnet 3 located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   VPCCIDR:
@@ -157,27 +157,19 @@ Parameters:
     AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]
 Conditions:
   PublicSubnetsCondition: !Equals [!Ref 'CreatePublicSubnets', 'true']
-  3AZCondition: !Or [!Equals [!Ref 'NumberOfAZs', '3'], !Condition '4AZCondition']
-  4AZCondition: !Equals [!Ref 'NumberOfAZs', '4']
+  3AZCondition: !Equals [!Ref 'NumberOfAZs', '3']  
   3AZPublicCondition: !And [!Condition '3AZCondition', !Condition 'PublicSubnetsCondition']
-  4AZPublicCondition: !And [!Condition '4AZCondition', !Condition 'PublicSubnetsCondition']
-  AdditionalPrivateSubnetsCondition: !And [!Equals [!Ref 'CreatePrivateSubnets', 'true'],
-    !Equals [!Ref 'CreateAdditionalPrivateSubnets', 'true']]
+  AdditionalPrivateSubnetsCondition: !And [!Equals [!Ref 'CreatePrivateSubnets', 'true'],!Equals [!Ref 'CreateAdditionalPrivateSubnets', 'true']]
   AdditionalPrivateSubnets&3AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '3AZCondition']
-  AdditionalPrivateSubnets&4AZCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition '4AZCondition']
   NATGatewayCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition 'PublicSubnetsCondition']
   NATGateway&3AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '3AZCondition']
-  NATGateway&4AZCondition: !And [!Condition 'NATGatewayCondition', !Condition '4AZCondition']
   AdditionalPrivateSubnets&NATGatewayCondition: !And [!Condition 'AdditionalPrivateSubnetsCondition', !Condition 'NATGatewayCondition']
   AdditionalPrivateSubnets&NATGateway&3AZCondition: !And [!Condition 'AdditionalPrivateSubnets&3AZCondition', !Condition 'NATGateway&3AZCondition']
-  AdditionalPrivateSubnets&NATGateway&4AZCondition: !And [!Condition 'AdditionalPrivateSubnets&4AZCondition', !Condition 'NATGateway&4AZCondition']
   NVirginiaRegionCondition: !Equals [!Ref 'AWS::Region', us-east-1]
   PrivateSubnetsCondition: !Equals [!Ref 'CreatePrivateSubnets', 'true']
   PrivateSubnets&3AZCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition '3AZCondition']
-  PrivateSubnets&4AZCondition: !And [!Condition 'PrivateSubnetsCondition', !Condition '4AZCondition']
   Public&PrivateSubnetsCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition']
   Public&PrivateSubnets&3AZCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition', !Condition '3AZCondition']
-  Public&PrivateSubnets&4AZCondition: !And [!Condition 'PublicSubnetsCondition', !Condition 'PrivateSubnetsCondition', !Condition '4AZCondition']
   S3VPCEndpointCondition: !And [!Condition 'PrivateSubnetsCondition', !Not [!Or [
         !Equals [!Ref 'AWS::Region', us-gov-west-1], !Equals [!Ref 'AWS::Region',
           cn-north-1]]]]
