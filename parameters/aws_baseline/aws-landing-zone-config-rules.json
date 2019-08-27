@@ -32,10 +32,6 @@
     "ParameterValue": "true"
   },
   {
-    "ParameterKey": "IamPassword",
-    "ParameterValue": "true"
-  },
-  {
     "ParameterKey": "Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule",
     "ParameterValue": "true"
   },
