@@ -321,25 +321,12 @@ Parameters:
     Description: The name that you assign to the AWS Config rule.
     MinLength: '1'
     ConstraintDescription: This parameter is required.
-
   ConfigRuleName:
     Type: String
     Default: iam-password-policy
     Description: The name that you assign to the AWS Config rule.
     MinLength: '1'
     ConstraintDescription: This parameter is required.
-  MaximumExecutionFrequency:
-    Type: String
-    Default: TwentyFour_Hours
-    Description: The frequency that you want AWS Config to run evaluations for the rule.
-    MinLength: '1'
-    ConstraintDescription: This parameter is required.
-    AllowedValues:
-      - One_Hour
-      - Three_Hours
-      - Six_Hours
-      - Twelve_Hours
-      - TwentyFour_Hours
   RequireUppercaseCharacters:
     Type: String
     Default: 'true'
@@ -367,7 +354,7 @@ Parameters:
   MaxPasswordAge:
     Type: String
     Default: '90'
-    Description: Number of days before password expiration.	
+    Description: Number of days before password expiration.
 Conditions:
   EnableEncryptedVolumes: !Equals
     - !Ref EnableEncryptedVolumesRule
@@ -627,7 +614,7 @@ Conditions:
   MaxPasswordAge: !Not 
     - !Equals 
       - ''
-      - !Ref MaxPasswordAge	  
+      - !Ref MaxPasswordAge   
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -642,7 +629,7 @@ Metadata:
       - EnableRestrictedCommonPortsRule
       - EnableRestrictedSshRule
       - AutoscalingGroupElbHealthcheckRequiredRule
-      - IamPassword
+      - IamPasswordRule
       - Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule
       - DbInstanceBackUpEnabledRule
       - RdsMultiAzSupportRule
@@ -658,8 +645,14 @@ Metadata:
       - S3BucketLoggingEnabledRule
       - CloudwatchAlarmActionCheck
       - RootAccountMfaEnabled
-	  - KMSId
-      - MaximumExecutionFrequency    
+    - Label:
+        default: Misc Parameters
+      Parameters:
+      - KMSId
+      - MaximumExecutionFrequency
+    - Label:
+        default: Restricted Common Ports
+      Parameters:
       - blockedPort1
       - blockedPort2
       - blockedPort3
@@ -669,7 +662,7 @@ Metadata:
       - tag2Key
       - tag3Key
       - tag4Key
-      - tag5Key      
+      - tag5Key
 Resources:
   CheckForEncryptedVolumes:
     Type: AWS::Config::ConfigRule
@@ -1200,5 +1193,3 @@ Resources:
         SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
       MaximumExecutionFrequency:
         Ref: MaximumExecutionFrequency
-
-
