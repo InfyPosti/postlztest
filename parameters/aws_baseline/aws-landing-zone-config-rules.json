@@ -32,7 +32,7 @@
     "ParameterValue": "true"
   },
   {
-    "ParameterKey": "Ec2InstancesInVpcRule",
+    "ParameterKey": "IamPassword",
     "ParameterValue": "true"
   },
   {
