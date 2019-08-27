@@ -104,39 +104,39 @@ Parameters:
     Description: Number of Availability Zones to use in the VPC. This must match your selections in the list of Availability Zones parameter.
     Type: String
   PrivateSubnet1ACIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for private subnet 1A located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet1BCIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for DBprivate subnet 1B with dedicated network ACL located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2ACIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for private subnet 2A located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet2BCIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for DBprivate subnet 2B with dedicated network ACL located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3ACIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for private subnet 3A located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PrivateSubnet3BCIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for DBprivate subnet 3B with dedicated network ACL located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet1CIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for the public DMZ subnet 1 located in Availability Zone 1, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet2CIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for the public DMZ subnet 2 located in Availability Zone 2, value must be something like 10.x.x.x/x.
     Type: String
   PublicSubnet3CIDR:
-    Default: 
+    Default: 10.14.0.0/28
     Description: CIDR block for the public DMZ subnet 3 located in Availability Zone 3, value must be something like 10.x.x.x/x.
     Type: String
   VPCCIDR:
