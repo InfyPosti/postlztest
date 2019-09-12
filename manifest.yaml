@@ -2,7 +2,7 @@
 #Default region for deploying AWS Landing Zone assets: Code Pipeline, Step functions, Lambda, SSM parameters, Service Catalog Portfolio/Products and StackSets
 region: eu-west-1
 version: 2018-06-14
-lock_down_stack_sets_role: Yes
+lock_down_stack_sets_role: No
 nested_ou_delimiter: ':' # the value for this key must be in single quotes
 
 # Landing Zone Core Account Structure
@@ -145,6 +145,7 @@ portfolios:
         # This is the skeleton template for the AVM
         skeleton_file: templates/aws_baseline/aws-landing-zone-avm.template.j2
         parameter_file: parameters/aws_baseline/aws-landing-zone-avm.json
+        rules_file: template_constraints/aws-landing-zone-avm-rules.json
         # Hide/Disable the old version of the product in Service Catalog
         hide_old_versions: true
         
@@ -229,7 +230,14 @@ baseline_resources:
     template_file: templates/aws_baseline/aws-landing-zone-iam-password-policy.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-iam-password-policy.json
     deploy_method: stack_set
-
+    
+  - name: SamlRolesPolicy
+    baseline_products:
+      - AWS-Landing-Zone-Account-Vending-Machine
+    template_file: templates/aws_baseline/aws-landing-zone-saml.template
+    parameter_file: parameters/aws_baseline/aws-landing-zone-saml-role.json
+    deploy_method: stack_set
+    
   - name: PrimaryVPC
     baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
