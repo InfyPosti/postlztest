@@ -233,14 +233,14 @@ baseline_resources:
   - name: SamlRolePolicy
     baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
-    template_file: templates/aws_baseline/aws-landing-zone-iam-password-policy.template
-    parameter_file: parameters/aws_baseline/aws-landing-zone-iam-password-policy.json
+    template_file: templates/aws_baseline/aws-landing-zone-saml.template
+    parameter_file: parameters/aws_baseline/aws-landing-zone-saml-role.json
     deploy_method: stack_set
 
   - name: PrimaryVPC
     baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
-    template_file: templates/aws_baseline/aws-landing-zone-saml.template
-    parameter_file: parameters/aws_baseline/aws-landing-zone-saml-role.json
+    template_file: templates/aws_baseline/aws-landing-zone-vpc.template
+    parameter_file: parameters/aws_baseline/aws-landing-zone-primary-vpc.json
     deploy_method: stack_set
     parameter_override: true
