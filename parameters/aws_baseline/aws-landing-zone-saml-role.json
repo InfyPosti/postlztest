@@ -1,0 +1,14 @@
+[
+  {
+      "ParameterKey": "ApplicationID",
+      "ParameterValue": "App"
+  },
+  {
+      "ParameterKey": "ApplicationName",
+      "ParameterValue": "tba"
+  },
+  {
+      "ParameterKey": "Environment",
+      "ParameterValue": "tst"
+  }
+]
