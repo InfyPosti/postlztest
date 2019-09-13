@@ -2,7 +2,7 @@
 #Default region for deploying AWS Landing Zone assets: Code Pipeline, Step functions, Lambda, SSM parameters, Service Catalog Portfolio/Products and StackSets
 region: eu-west-1
 version: 2018-06-14
-lock_down_stack_sets_role: No
+lock_down_stack_sets_role: Yes
 nested_ou_delimiter: ':' # the value for this key must be in single quotes
 
 # Landing Zone Core Account Structure
@@ -145,7 +145,6 @@ portfolios:
         # This is the skeleton template for the AVM
         skeleton_file: templates/aws_baseline/aws-landing-zone-avm.template.j2
         parameter_file: parameters/aws_baseline/aws-landing-zone-avm.json
-        rules_file: template_constraints/aws-landing-zone-avm-rules.json
         # Hide/Disable the old version of the product in Service Catalog
         hide_old_versions: true
         
