@@ -32,6 +32,10 @@
     "ParameterValue": "true"
   },
   {
+    "ParameterKey": "Ec2InstancesInVpcRule",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule",
     "ParameterValue": "true"
   },
@@ -161,23 +165,27 @@
   },
     {
     "ParameterKey": "tag1Key",
-    "ParameterValue": "Name"
+    "ParameterValue": "Application Name"
   },
   {
     "ParameterKey": "tag2Key",
-    "ParameterValue": "ApplicationName"
+    "ParameterValue": "Cost Center"
   },
   {
     "ParameterKey": "tag3Key",
-    "ParameterValue": "ApplicationId"
+    "ParameterValue": "Work Number"
   },
   {
     "ParameterKey": "tag4Key",
-    "ParameterValue": "CostCenter"
+    "ParameterValue": "DailyVolumeBackup"
   },
   {
     "ParameterKey": "tag5Key",
-    "ParameterValue": "Environment"
+    "ParameterValue": "Application Solution Manager"
+  },
+  {
+    "ParameterKey": "tag6Key",
+    "ParameterValue": "Application Service Manager"
   },
   {
     "ParameterKey": "trafficType",
