@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: {{manifest.portfolios[portfolio_index].products[product_index].description}}
+
 Parameters:
   AccountName:
     Description: Name for the Account
@@ -26,11 +27,23 @@ Parameters:
       {%- endfor %}
   VPCOptions:
     Type: String
-    Default: Public-and-2-Private-Subnets-3-AZ
+    Default: No-Primary-VPC
     Description: VPC options
     AllowedValues:
       - No-Primary-VPC
+      - Public-Only-2-AZ
+      - Public-Only-3-AZ
+      - Public-Only-4-AZ
+      - Private-Only-2-AZ
+      - Private-Only-3-AZ
+      - Private-Only-4-AZ
+      - Public-and-Private-Subnets-2-AZ
+      - Public-and-Private-Subnets-3-AZ
+      - Public-and-Private-Subnets-4-AZ
+      - Public-and-2-Private-Subnets-2-AZ
       - Public-and-2-Private-Subnets-3-AZ
+      - Public-and-2-Private-Subnets-4-AZ
+
   VPCRegion:
     Description: VPC Region
     Type: String
@@ -39,12 +52,14 @@ Parameters:
       - {{ region }}
       {%- endfor %}
     Default: {{ manifest.region }}
+
   VPCCidr:
       Type: String
       AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
       ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
       Description: CIDR block for the VPC
-      Default: 10.14.0.0/22
+      Default: 10.0.0.0/16
+
   PeerVPC:
       Type: String
       Default: No
@@ -52,6 +67,7 @@ Parameters:
         - Yes
         - No
       Description: Would you like to peer this account's Primary VPC's Private Subnets with the Shared Service VPC's Private Subnets?
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -83,8 +99,121 @@ Metadata:
         default: Peer with Shared-Services VPC
       VPCRegion:
         default: Network Region
+
 Mappings:
   VPC:
+    Public-Only-2-AZ:
+      AvailabilityZones: 2
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+      PrivateSubnets: []
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'false'
+      CreatePublicSubnets: 'true'
+    Public-Only-3-AZ:
+      AvailabilityZones: 3
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+      PrivateSubnets: []
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'false'
+      CreatePublicSubnets: 'true'
+    Public-Only-4-AZ:
+      AvailabilityZones: 4
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+          - PublicSubnet4CIDR
+      PrivateSubnets: []
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'false'
+      CreatePublicSubnets: 'true'
+    Private-Only-2-AZ:
+      AvailabilityZones: 2
+      PublicSubnets: []
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'false'
+    Private-Only-3-AZ:
+      AvailabilityZones: 3
+      PublicSubnets: []
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'false'
+    Private-Only-4-AZ:
+      AvailabilityZones: 4
+      PublicSubnets: []
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+          - PrivateSubnet4ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'false'
+    Public-and-Private-Subnets-2-AZ:
+      AvailabilityZones: 2
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'true'
+    Public-and-Private-Subnets-3-AZ:
+      AvailabilityZones: 3
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'true'
+    Public-and-Private-Subnets-4-AZ:
+      AvailabilityZones: 4
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+          - PublicSubnet4CIDR
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+          - PrivateSubnet4ACIDR
+      CreateAdditionalPrivateSubnets: 'false'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'true'
+    Public-and-2-Private-Subnets-2-AZ:
+      AvailabilityZones: 2
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet1BCIDR
+          - PrivateSubnet2BCIDR
+      CreateAdditionalPrivateSubnets: 'true'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'true'
     Public-and-2-Private-Subnets-3-AZ:
       AvailabilityZones: 3
       PublicSubnets:
@@ -101,6 +230,26 @@ Mappings:
       CreateAdditionalPrivateSubnets: 'true'
       CreatePrivateSubnets: 'true'
       CreatePublicSubnets: 'true'
+    Public-and-2-Private-Subnets-4-AZ:
+      AvailabilityZones: 4
+      PublicSubnets:
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - PublicSubnet3CIDR
+          - PublicSubnet4CIDR
+      PrivateSubnets:
+          - PrivateSubnet1ACIDR
+          - PrivateSubnet2ACIDR
+          - PrivateSubnet3ACIDR
+          - PrivateSubnet4ACIDR
+          - PrivateSubnet1BCIDR
+          - PrivateSubnet2BCIDR
+          - PrivateSubnet3BCIDR
+          - PrivateSubnet4BCIDR
+      CreateAdditionalPrivateSubnets: 'true'
+      CreatePrivateSubnets: 'true'
+      CreatePublicSubnets: 'true'
+
 Conditions:
   CreateVPC: !Not
     - !Equals
@@ -109,10 +258,13 @@ Conditions:
   PeerVPC: !Equals
       - !Ref PeerVPC
       - Yes
+
 Resources:
+
 #
 # Check if AVM was run for this account before
 #
+
   CheckAVMExistsForAccount:
     Type: Custom::CheckAVMExistsForAccount
     Properties:
@@ -123,9 +275,12 @@ Resources:
         AccountName: !Ref AccountName
         AccountEmail: !Ref AccountEmail
       ServiceToken: {{ lambda_arn }}
+
+
 #
 # AWS Organizations Custom Resource - Creates one new account
 #
+
   Organizations:
     DependsOn:
       - CheckAVMExistsForAccount
@@ -138,12 +293,15 @@ Resources:
       OUNameDelimiter: '{{manifest.nested_ou_delimiter}}'
       {%- endif %}
       ServiceToken: {{ lambda_arn }}
+
 #
 # Cloudformation StackSets Custom Resource
 #
+
 {%- for resource in manifest.baseline_resources %}
   {%- if resource.deploy_method == 'stack_set' and resource.parameter_override != 'true' %}
     {%- if manifest.portfolios[portfolio_index].products[product_index].name in resource.baseline_products %}
+
   StackSet{{resource.name | replace("-","") | replace("_","")}}:
     DependsOn:
       - Organizations
@@ -170,12 +328,14 @@ Resources:
     {%- endif %}
   {%- endif %}
 {%- endfor %}
+
 #
 # CloudFormation StackSets Custom Resource - PrimaryVPC
 #
 {%- for resource in manifest.baseline_resources %}
   {%- if resource.name == 'PrimaryVPC' %}
     {%- if manifest.portfolios[portfolio_index].products[product_index].name in resource.baseline_products %}
+
   StackSet{{resource.name | replace("-","") | replace("_","")}}:
     Condition: CreateVPC
     DependsOn:
@@ -199,9 +359,11 @@ Resources:
     {%- endif %}
   {%- endif %}
 {%- endfor %}
+
 #
 # VPC Custom Resource - Subnet and AZ Calculator
 #
+
   VPCCalculator:
     Condition: CreateVPC
     Type: Custom::VPCCalculator
@@ -237,9 +399,11 @@ Resources:
         - CreateAdditionalPrivateSubnets
       Region: !Ref VPCRegion
       ServiceToken: {{ lambda_arn }}
+
 #
 # VPC Custom Resource - Get SSM Parameter Values
 #
+
   SSMGetParameters:
     Type: Custom::SSMParameters
     Properties:
@@ -251,6 +415,7 @@ Resources:
           - /org/member/security/account_id
           - /org/member/logging/account_id
         ServiceToken: {{ lambda_arn }}
+
 {%- for ou in manifest.organizational_units %}
 {%- for account in ou.core_accounts %}
 {%- for resource in account.core_resources %}
@@ -261,9 +426,11 @@ Resources:
     {% set region_list =  [manifest.region] %}
   {%- endif %}
 {%- for region in region_list %}
+
 #
 # GuardDuty Custom Resource - {{ region }} (depends on release/v2.0)
 #
+
   GuardDutyMemberof{{ account.name.title() | replace("-","") | replace("_","")}}Account{{region.title() | replace("-","") }}:
     DependsOn:
       - Organizations
@@ -276,14 +443,17 @@ Resources:
       SpokeRegion: {{ region }}
       SpokeEmailId: !Ref AccountEmail
       ServiceToken: {{ lambda_arn }}
+
 {%- endfor %}
 {%- endif %}
 {%- endfor %}
 {%- endfor %}
 {%- endfor %}
+
 #
 # Expunge VPC Custom Resource - Delete Default VPC
 #
+
   ExpungeVPC:
     DependsOn:
       - Organizations
@@ -293,9 +463,12 @@ Resources:
           - !GetAtt 'Organizations.AccountId'
         Region: !Ref VPCRegion
         ServiceToken: {{ lambda_arn }}
+
+
 #
 # VPC Custom Resource - Peering
 #
+
   VPCPeeringCR:
     Condition: PeerVPC
     Type: Custom::HandShakeStateMachine
@@ -310,9 +483,11 @@ Resources:
       SpokeVPCId: !GetAtt 'StackSetPrimaryVPC.output_vpcid'
       SpokeRegion: !Ref VPCRegion
       ServiceToken: {{ lambda_arn }}
+
 #
 # VPC Custom Resource - Peer Routing
 #
+
   NewVPCPeerRouting:
     Condition: PeerVPC
     Type: Custom::VPCPeering
@@ -322,9 +497,11 @@ Resources:
     Properties:
       AccountID : !GetAtt 'Organizations.AccountId'
       Region: !Ref VPCRegion
+      RouteTableIDs: !GetAtt 'StackSetPrimaryVPC.output_privatesubnetroutetables'
       PeerConnectionID : !GetAtt 'VPCPeeringCR.ConnectionId'
       VPCCIDR: !GetAtt 'VPCPeeringCR.HubVPCCIDR'
       ServiceToken: {{ lambda_arn }}
+
   SharedVPCPeerRouting:
     Condition: PeerVPC
     Type: Custom::VPCPeering
@@ -334,9 +511,11 @@ Resources:
     Properties:
       AccountID: !GetAtt 'SSMGetParameters./org/member/sharedservices/account_id'
       Region: !GetAtt 'SSMGetParameters./org/member/sharedservices/vpc_region'
+      RouteTableIDs: !GetAtt 'SSMGetParameters./org/member/sharedservices/vpc_private_route_ids'
       PeerConnectionID : !GetAtt 'VPCPeeringCR.ConnectionId'
       VPCCIDR: !GetAtt 'VPCPeeringCR.SpokeVPCCIDR'
       ServiceToken: {{ lambda_arn }}
+
 Outputs:
   AccountName:
     Description: Account Name
