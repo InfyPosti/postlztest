@@ -14,7 +14,7 @@ organizational_units:
     core_accounts:
       # Security account
       - name: security
-        email: lzsecservices@gmail.com
+        email: DL.Posti.aws@infosys.com
         ssm_parameters:
           - name: /org/member/security/account_id
             value: $[AccountId]
@@ -76,7 +76,7 @@ organizational_units:
             #  - us-west-2
       # Logging account
       - name: log-archive
-        email: lzlogarchive@gmail.com
+        email: venkata_bijjam@infosys.com
         ssm_parameters:
           - name: /org/member/logging/account_id
             value: $[AccountId]
@@ -90,7 +90,7 @@ organizational_units:
                 value: $[output_BucketName]
       # Shared Services account
       - name: shared-services
-        email: lzsharedservices@gmail.com
+        email: RANJITP@infosys.com
         ssm_parameters:
           - name: /org/member/sharedservices/account_id
             value: $[AccountId]
