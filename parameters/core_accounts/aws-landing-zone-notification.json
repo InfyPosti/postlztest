@@ -29,6 +29,6 @@
   },
   {
     "ParameterKey": "SubscribeToAllConfigurationTopic",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
   }
 ]
