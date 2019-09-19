@@ -58,6 +58,16 @@ Parameters:
     AllowedValues:
     - true
     - false
+<<<<<<< HEAD
+=======
+  Ec2InstancesInVpcRule:
+    Type: String
+    Description: "Enables the AWS managed Ec2 Instance In VPC config rule. To disable, change the parameter value to false."
+    Default: true
+    AllowedValues:
+    - true
+    - false
+>>>>>>> master
   Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule:
     Type: String
     Description: "Enables the AWS managed Ec2Managed Instance Assocaiton Compliance Status Check config rule. To disable, change the parameter value to false."
@@ -242,6 +252,7 @@ Parameters:
     Description: Blocked TCP port number.
   tag1Key:
     Type: String
+<<<<<<< HEAD
     Default: 'Name'
     Description: tagging key .
   tag2Key:
@@ -259,6 +270,29 @@ Parameters:
   tag5Key:
     Type: String
     Default: 'Environment'
+=======
+    Default: 'Application Name'
+    Description: tagging key .
+  tag2Key:
+    Type: String
+    Default: 'Cost Center'
+    Description: tagging key .
+  tag3Key:
+    Type: String
+    Default: 'Work Number'
+    Description: tagging key .
+  tag4Key:
+    Type: String
+    Default: 'DailyVolumeBackup'
+    Description: tagging key .
+  tag5Key:
+    Type: String
+    Default: 'Application Solution Manager'
+    Description: tagging key .
+  tag6Key:
+    Type: String
+    Default: 'Application Service Manager'
+>>>>>>> master
     Description: tagging key .
   trafficType:
     Type: String
@@ -344,6 +378,12 @@ Conditions:
   EnableAutoscalingGroupElbHealthcheckRequiredPolicy: !Equals
     - !Ref AutoscalingGroupElbHealthcheckRequiredRule
     - 'true'
+<<<<<<< HEAD
+=======
+  EnableEc2InstancesInVpcRulePolicy: !Equals
+    - !Ref Ec2InstancesInVpcRule
+    - 'true'
+>>>>>>> master
   EnableEc2ManagedInstanceAssocaitonComplianceStatusCheckRulePolicy: !Equals
     - !Ref Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule
     - 'true'
@@ -468,6 +508,14 @@ Conditions:
     - Fn::Equals:
       - ''
       - Ref: tag5Key
+<<<<<<< HEAD
+=======
+  tag6Key:
+    Fn::Not:
+    - Fn::Equals:
+      - ''
+      - Ref: tag6Key
+>>>>>>> master
   s3BucketName:
     Fn::Not:
     - Fn::Equals:
@@ -568,6 +616,10 @@ Metadata:
       - EnableRestrictedCommonPortsRule
       - EnableRestrictedSshRule
       - AutoscalingGroupElbHealthcheckRequiredRule
+<<<<<<< HEAD
+=======
+      - Ec2InstancesInVpcRule
+>>>>>>> master
       - Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule
       - DbInstanceBackUpEnabledRule
       - RdsMultiAzSupportRule
@@ -601,6 +653,10 @@ Metadata:
       - tag3Key
       - tag4Key
       - tag5Key
+<<<<<<< HEAD
+=======
+      - tag6Key
+>>>>>>> master
 Resources:
   CheckForEncryptedVolumes:
     Type: AWS::Config::ConfigRule
@@ -736,6 +792,26 @@ Resources:
       Source:
         Owner: AWS
         SourceIdentifier: AUTOSCALING_GROUP_ELB_HEALTHCHECK_REQUIRED
+<<<<<<< HEAD
+=======
+  CheckEc2InstancesInVpcRulePolicy:
+    Type: AWS::Config::ConfigRule
+    Condition: EnableEc2InstancesInVpcRulePolicy
+    Properties:
+      Description: Checks whether your EC2 instances belong to a virtual private cloud (VPC).
+      InputParameters:
+        vpcId:
+          Fn::If:
+          - vpcId
+          - Ref: vpcId
+          - Ref: AWS::NoValue
+      Scope:
+        ComplianceResourceTypes:
+        - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: INSTANCES_IN_VPC
+>>>>>>> master
   CheckEc2ManagedInstanceAssocaitonComplianceStatusCheckRulePolicy:
     Type: AWS::Config::ConfigRule
     Condition: EnableEc2ManagedInstanceAssocaitonComplianceStatusCheckRulePolicy
@@ -918,6 +994,14 @@ Resources:
           - tag5Key
           - Ref: tag5Key
           - Ref: AWS::NoValue
+<<<<<<< HEAD
+=======
+        tag6Key:
+          Fn::If:
+          - tag6Key
+          - Ref: tag6Key
+          - Ref: AWS::NoValue
+>>>>>>> master
       Scope:
         ComplianceResourceTypes:
         - AWS::ACM::Certificate
