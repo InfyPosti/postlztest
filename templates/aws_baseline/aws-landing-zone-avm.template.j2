@@ -31,7 +31,11 @@ Parameters:
     AllowedValues:
       - No-Primary-VPC
       - Public-and-2-Private-Subnets-3-AZ
+<<<<<<< HEAD
+      - Private-Only-3-AZ	  
+=======
 	  - Private-Only-3-AZ
+>>>>>>> master
   VPCRegion:
     Description: VPC Region
     Type: String
@@ -46,6 +50,8 @@ Parameters:
       ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
       Description: CIDR block for the VPC
       Default: 10.14.0.0/22
+<<<<<<< HEAD
+=======
   PeerVPC:
       Type: String
       Default: No
@@ -53,6 +59,7 @@ Parameters:
         - Yes
         - No
       Description: Would you like to peer this account's Primary VPC's Private Subnets with the Shared Service VPC's Private Subnets?
+>>>>>>> master
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -67,8 +74,7 @@ Metadata:
         Parameters:
           - VPCOptions
           - VPCRegion
-          - VPCCidr
-          - PeerVPC
+          - VPCCidr         
     ParameterLabels:
       AccountName:
         default: Account Name
@@ -80,8 +86,6 @@ Metadata:
         default: Network Type
       VPCCidr:
         default: Network CIDR Range
-      PeerVPC:
-        default: Peer with Shared-Services VPC
       VPCRegion:
         default: Network Region
 Mappings:
@@ -112,14 +116,21 @@ Mappings:
       CreateAdditionalPrivateSubnets: 'false'
       CreatePrivateSubnets: 'true'
       CreatePublicSubnets: 'false'
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 Conditions:
   CreateVPC: !Not
     - !Equals
       - !Ref VPCOptions
       - No-Primary-VPC
+<<<<<<< HEAD
+=======
   PeerVPC: !Equals
       - !Ref PeerVPC
       - Yes
+>>>>>>> master
 Resources:
 #
 # Check if AVM was run for this account before
@@ -304,6 +315,9 @@ Resources:
           - !GetAtt 'Organizations.AccountId'
         Region: !Ref VPCRegion
         ServiceToken: {{ lambda_arn }}
+<<<<<<< HEAD
+
+=======
 #
 # VPC Custom Resource - Peering
 #
@@ -348,6 +362,7 @@ Resources:
       PeerConnectionID : !GetAtt 'VPCPeeringCR.ConnectionId'
       VPCCIDR: !GetAtt 'VPCPeeringCR.SpokeVPCCIDR'
       ServiceToken: {{ lambda_arn }}
+>>>>>>> master
 Outputs:
   AccountName:
     Description: Account Name

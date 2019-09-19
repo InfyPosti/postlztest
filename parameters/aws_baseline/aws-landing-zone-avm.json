@@ -20,10 +20,6 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "PeerVPC",
-    "ParameterValue": ""
-  },
-  {
     "ParameterKey": "VPCRegion",
     "ParameterValue": ""
   }
