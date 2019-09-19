@@ -11,7 +11,7 @@
   },
   {
     "ParameterKey": "NumberOfAZs",
-    "ParameterValue": "2"
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "ManagedResourcePrefix",

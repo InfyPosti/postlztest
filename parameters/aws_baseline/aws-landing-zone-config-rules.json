@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "EnableS3PublicReadRule",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "EnableS3PublicWriteRule",
@@ -21,15 +21,123 @@
   },
   {
     "ParameterKey": "EnableRestrictedCommonPortsRule",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "EnableRestrictedSshRule",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
+  },
+    {
+    "ParameterKey": "AutoscalingGroupElbHealthcheckRequiredRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "Ec2InstancesInVpcRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "DbInstanceBackUpEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "RdsMultiAzSupportRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "CloudTrailCloudWatchLogsEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "CloudTrailEncryptionEnabledRule",
+    "ParameterValue": "true"
+  },
+    {
+    "ParameterKey": "CloudtrailEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "MultiRegionCloudTrailEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "RequiredTagsRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "VpcFlowLogsEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "AccessKeysRotatedRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "IamUserMfaEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "MfaEnabledForIamConsoleAccessRule",
+    "ParameterValue": "true"
+  },
+    {
+    "ParameterKey": "S3BucketLoggingEnabledRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "CloudwatchAlarmActionCheck",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "RootAccountMfaEnabled",
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "KMSId",
     "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "vpcId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "backupRetentionPeriod",
+    "ParameterValue": "7"
+  },
+    {
+    "ParameterKey": "preferredBackupWindow",
+    "ParameterValue": "01:00"
+  },
+  {
+    "ParameterKey": "checkReadReplicas",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "expectedDeliveryWindowAge",
+    "ParameterValue": "12"
+  },
+  {
+    "ParameterKey": "s3BucketName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "snsTopicArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cloudWatchLogsLogGroupArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "includeManagementEvents",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "readWriteType",
+    "ParameterValue": "ALL"
   },
   {
     "ParameterKey": "MaximumExecutionFrequency",
@@ -43,7 +151,7 @@
     "ParameterKey": "blockedPort2",
     "ParameterValue": "21"
   },
-  {
+    {
     "ParameterKey": "blockedPort3",
     "ParameterValue": "3389"
   },
@@ -54,5 +162,73 @@
   {
     "ParameterKey": "blockedPort5",
     "ParameterValue": "4333"
+  },
+    {
+    "ParameterKey": "tag1Key",
+    "ParameterValue": "Application Name"
+  },
+  {
+    "ParameterKey": "tag2Key",
+    "ParameterValue": "Cost Center"
+  },
+  {
+    "ParameterKey": "tag3Key",
+    "ParameterValue": "Work Number"
+  },
+  {
+    "ParameterKey": "tag4Key",
+    "ParameterValue": "DailyVolumeBackup"
+  },
+  {
+    "ParameterKey": "tag5Key",
+    "ParameterValue": "Application Solution Manager"
+  },
+  {
+    "ParameterKey": "tag6Key",
+    "ParameterValue": "Application Service Manager"
+  },
+  {
+    "ParameterKey": "trafficType",
+    "ParameterValue": "ALL"
+  },
+  {
+    "ParameterKey": "maxAccessKeyAge",
+    "ParameterValue": "90"
+  },
+  {
+    "ParameterKey": "targetBucket",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "targetPrefix",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "ConfigRuleName",
+    "ParameterValue": "cloudwatch-alarm-action-check"
+  },
+    {
+    "ParameterKey": "alarmActionRequired",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "insufficientDataActionRequired",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "okActionRequired",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "action1",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "action2",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "ConfigRuleName",
+    "ParameterValue": "root-account-mfa-enabled"
   }
 ]

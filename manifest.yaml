@@ -8,7 +8,7 @@ nested_ou_delimiter: ':' # the value for this key must be in single quotes
 # Landing Zone Core Account Structure
 organizational_units:
   # Landing Zone OU for Core accounts
-  - name: core
+  - name: coreLZ
     include_in_baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
     core_accounts:
@@ -32,9 +32,10 @@ organizational_units:
             template_file: templates/core_accounts/aws-landing-zone-notification.template
             parameter_file: parameters/core_accounts/aws-landing-zone-notification.json
             deploy_method: stack_set
-            # This SNS Topic needs to be deployed in ALL the regions where AWS Config service is enabled. (See baseline_resources: EnableConfig)
-            #regions:
+            # This SNS Topic needs to be deployed in eu-west-1 the regions where AWS Config service is enabled. (See baseline_resources: EnableConfig)
+            #region:
             #  - eu-west-1
+
             ssm_parameters:
               - name: /org/primary/sns_topic_arn
                 value: $[output_TopicARN]
@@ -45,13 +46,6 @@ organizational_units:
             parameter_file: parameters/core_accounts/aws-landing-zone-guardduty-master.json
             deploy_method: stack_set
             #regions:
-            #  - ap-northeast-1
-            #  - ap-northeast-2
-            #  - ap-south-1
-            #  - ap-southeast-1
-            #  - ap-southeast-2
-            #  - ca-central-1
-            #  - eu-central-1
             #  - eu-west-1
       # Logging account
       - name: log-archive
@@ -103,8 +97,6 @@ organizational_units:
                 value: $[output_PublicSubnet2CIDR]
               - name: /org/member/sharedservices/public_subnet2_id
                 value: $[output_PublicSubnet2ID]
-              - name: /org/member/sharedservices/vpc_private_route_ids
-                value: $[output_PrivateSubnetRouteTables]
       # Organization's Master account
       - name: primary  # NOTE: DO NOT MODIFY THIS ACCOUNT NAME AND IT SHOULD BE THE LAST CORE ACCOUNT IN THE LIST
         ssm_parameters:
@@ -122,15 +114,7 @@ organizational_units:
     include_in_baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
   
-  - name: DigitalCommerce:RMS
-    include_in_baseline_products:
-      - AWS-Landing-Zone-Account-Vending-Machine
-  
-  - name: DigitalCommerce:APT
-    include_in_baseline_products:
-      - AWS-Landing-Zone-Account-Vending-Machine
-  
-  - name: Others
+  - name: Common
     include_in_baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
   
@@ -141,16 +125,14 @@ organization_policies:
     policy_file: policies/aws-landing-zone-core-mandatory-preventive-guardrails.json
     #Apply to accounts in the following OU(s)
     apply_to_accounts_in_ou:
-      - core
+      - coreLZ
   - name: aws-landing-zone-non-core-mandatory-preventive-guardrails
     description: To prevent from deleting or disabling resources in non-core accounts managed by AWS Landing Zone
     policy_file: policies/aws-landing-zone-non-core-mandatory-preventive-guardrails.json
     #Apply to accounts in the following OU(s)
     apply_to_accounts_in_ou:
       - DigitalCommerce
-      - DigitalCommerce:RMS
-      - DigitalCommerce:APT
-      - Others
+      - Common
 # Landing Zone Service Catalog portolfios/products (Optional/Baseline)
 portfolios:
   - name: AWS Landing Zone - Baseline
@@ -166,7 +148,7 @@ portfolios:
         rules_file: template_constraints/aws-landing-zone-avm-rules.json
         # Hide/Disable the old version of the product in Service Catalog
         hide_old_versions: true
-        # Is this is a baseline product? e.g. AVM ?
+        
         product_type: baseline
         launch_constraint_role: $[alfred_ssm_/org/primary/service_catalog/constraint/role_arn]
 
@@ -199,21 +181,7 @@ baseline_resources:
     parameter_file: parameters/aws_baseline/aws-landing-zone-enable-config.json
     deploy_method: stack_set
     #regions:
-    #  - ap-northeast-1
-    #  - ap-northeast-2
-    #  - ap-south-1
-    #  - ap-southeast-1
-    #  - ap-southeast-2
-    #  - ca-central-1
-    #  - eu-central-1
     #  - eu-west-1
-    #  - eu-west-2
-    #  - eu-west-3
-    #  - sa-east-1
-    #  - us-east-1
-    #  - us-east-2
-    #  - us-west-1
-    #  - us-west-2
 
     # This template deploys the Config Rules that monitor the Global resources i.e. IAM
     # It needs to be deployed in Home region ONLY
@@ -236,22 +204,8 @@ baseline_resources:
     template_file: templates/aws_baseline/aws-landing-zone-config-rules.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-config-rules.json
     deploy_method: stack_set
-    #regions:
-    #  - ap-northeast-1
-    #  - ap-northeast-2
-    #  - ap-south-1
-    #  - ap-southeast-1
-    #  - ap-southeast-2
-    #  - ca-central-1
-    #  - eu-central-1
+    #region:
     #  - eu-west-1
-    #  - eu-west-2
-    #  - eu-west-3
-    #  - sa-east-1
-    #  - us-east-1
-    #  - us-east-2
-    #  - us-west-1
-    #  - us-west-2
 
   - name: EnableNotifications
     baseline_products:
@@ -280,20 +234,7 @@ baseline_resources:
   - name: PrimaryVPC
     baseline_products:
       - AWS-Landing-Zone-Account-Vending-Machine
-<<<<<<< HEAD
-<<<<<<< HEAD
-    template_file: templates/aws_baseline/aws-landing-zone-saml.template
-    parameter_file: parameters/aws_baseline/aws-landing-zone-saml-role.json
-=======
-=======
->>>>>>> a1db5f4ffff02914754addb2f4218e2d297813b6
-    depends_on:
-      - VPCCalculator
     template_file: templates/aws_baseline/aws-landing-zone-vpc.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-primary-vpc.json
-<<<<<<< HEAD
->>>>>>> lzbranch
-=======
->>>>>>> a1db5f4ffff02914754addb2f4218e2d297813b6
     deploy_method: stack_set
     parameter_override: true

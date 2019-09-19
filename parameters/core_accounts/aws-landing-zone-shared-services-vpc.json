@@ -27,7 +27,7 @@
     },
     {
         "ParameterKey": "PrivateSubnet1ACIDR",
-        "ParameterValue": "100.64.96.0/19"
+        "ParameterValue": "10.14.0.96/27"
     },
     {
         "ParameterKey": "PrivateSubnet1BCIDR",
@@ -35,7 +35,7 @@
     },
     {
         "ParameterKey": "PrivateSubnet2ACIDR",
-        "ParameterValue": "100.64.128.0/19"
+        "ParameterValue": "10.14.0.128/27"
     },
     {
         "ParameterKey": "PrivateSubnet2BCIDR",
@@ -43,39 +43,27 @@
     },
     {
         "ParameterKey": "PrivateSubnet3ACIDR",
-        "ParameterValue": "100.64.160.0/19"
+        "ParameterValue": "10.14.0.160/27"
     },
     {
         "ParameterKey": "PrivateSubnet3BCIDR",
         "ParameterValue": "None"
     },
     {
-        "ParameterKey": "PrivateSubnet4ACIDR",
-        "ParameterValue": "None"
-    },
-    {
-        "ParameterKey": "PrivateSubnet4BCIDR",
-        "ParameterValue": "None"
-    },
-    {
         "ParameterKey": "PublicSubnet1CIDR",
-        "ParameterValue": "100.64.0.0/19"
+        "ParameterValue": "10.14.0.0/27"
     },
     {
         "ParameterKey": "PublicSubnet2CIDR",
-        "ParameterValue": "100.64.32.0/19"
+        "ParameterValue": "10.14.0.32/27"
     },
     {
         "ParameterKey": "PublicSubnet3CIDR",
-        "ParameterValue": "100.64.64.0/19"
-    },
-    {
-        "ParameterKey": "PublicSubnet4CIDR",
-        "ParameterValue": "None"
+        "ParameterValue": "10.14.0.64/27"
     },
     {
         "ParameterKey": "VPCCIDR",
-        "ParameterValue": "100.64.0.0/16"
+        "ParameterValue": "10.14.0.0/24"
     },
     {
         "ParameterKey": "TransitVPC",
@@ -83,7 +71,7 @@
     },
     {
         "ParameterKey": "LogsRetentionInDays",
-        "ParameterValue": "1"
+        "ParameterValue": "90"
     },
     {
         "ParameterKey": "ManagedResourcePrefix",
