@@ -1,11 +1,11 @@
 [
   {
     "ParameterKey": "EnableRootMfaRule",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "EnableIamPasswordPolicyRule",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "KMSId",
