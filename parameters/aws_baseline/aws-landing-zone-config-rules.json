@@ -32,6 +32,10 @@
     "ParameterValue": "true"
   },
   {
+    "ParameterKey": "Ec2InstancesInVpcRule",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "Ec2ManagedInstanceAssocaitonComplianceStatusCheckRule",
     "ParameterValue": "true"
   },
@@ -178,6 +182,10 @@
   {
     "ParameterKey": "tag5Key",
     "ParameterValue": "Application Solution Manager"
+  },
+  {
+    "ParameterKey": "tag6Key",
+    "ParameterValue": "Application Service Manager"
   },
   {
     "ParameterKey": "trafficType",
