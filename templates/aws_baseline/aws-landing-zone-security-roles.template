@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Configure the AWSLandingZoneAdminExecutionRole to enable read only access the target account.
+
 Parameters:
   SecurityAccountAdminRoleArn:
     Type: String
@@ -29,6 +30,7 @@ Parameters:
     AllowedValues:
       - 'true'
       - 'false'
+
 Conditions:
   CreateAdminRole: !Equals
     - !Ref EnableAdminRole
@@ -36,6 +38,7 @@ Conditions:
   CreateReadOnlyRole: !Equals
     - !Ref EnableReadOnlyRole
     - 'true'
+
 Resources:
   AdminExecutionRole:
     Type: AWS::IAM::Role
@@ -59,6 +62,7 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
+
   ReadOnlyExecutionRole:
     Type: AWS::IAM::Role
     Metadata:
