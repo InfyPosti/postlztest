@@ -33,8 +33,8 @@ organizational_units:
             parameter_file: parameters/core_accounts/aws-landing-zone-notification.json
             deploy_method: stack_set
             # This SNS Topic needs to be deployed in eu-west-1 the regions where AWS Config service is enabled. (See baseline_resources: EnableConfig)
-            #region:
-            #  - eu-west-1
+            region:
+              - eu-west-1
 
             ssm_parameters:
               - name: /org/primary/sns_topic_arn
@@ -45,8 +45,8 @@ organizational_units:
             template_file: templates/core_accounts/aws-landing-zone-guardduty-master.template
             parameter_file: parameters/core_accounts/aws-landing-zone-guardduty-master.json
             deploy_method: stack_set
-            #regions:
-            #  - eu-west-1
+            regions:
+              - eu-west-1
       # Logging account
       - name: log-archive
         email: venkata_bijjam@infosys.com
@@ -179,8 +179,8 @@ baseline_resources:
     template_file: templates/aws_baseline/aws-landing-zone-enable-config.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-enable-config.json
     deploy_method: stack_set
-    #regions:
-    #  - eu-west-1
+    regions:
+      - eu-west-1
 
     # This template deploys the Config Rules that monitor the Global resources i.e. IAM
     # It needs to be deployed in Home region ONLY
@@ -203,8 +203,8 @@ baseline_resources:
     template_file: templates/aws_baseline/aws-landing-zone-config-rules.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-config-rules.json
     deploy_method: stack_set
-    #region:
-    #  - eu-west-1
+    region:
+      - eu-west-1
 
   - name: EnableNotifications
     baseline_products:
@@ -237,10 +237,10 @@ baseline_resources:
     parameter_file: parameters/aws_baseline/aws-landing-zone-saml-role.json
     deploy_method: stack_set    
 
-  - name: PrimaryVPC
-    baseline_products:
-      - AWS-Landing-Zone-Account-Vending-Machine
-    template_file: templates/aws_baseline/aws-landing-zone-vpc.template
-    parameter_file: parameters/aws_baseline/aws-landing-zone-primary-vpc.json
-    deploy_method: stack_set
-    parameter_override: true
+  # - name: PrimaryVPC
+  #   baseline_products:
+  #     - AWS-Landing-Zone-Account-Vending-Machine
+  #   template_file: templates/aws_baseline/aws-landing-zone-vpc.template
+  #   parameter_file: parameters/aws_baseline/aws-landing-zone-primary-vpc.json
+  #   deploy_method: stack_set
+  #   parameter_override: true
