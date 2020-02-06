@@ -125,7 +125,7 @@ organization_policies:
     policy_file: policies/aws-landing-zone-core-mandatory-preventive-guardrails.json
     #Apply to accounts in the following OU(s)
     apply_to_accounts_in_ou:
-      - core
+      - coreLZ
   - name: aws-landing-zone-non-core-mandatory-preventive-guardrails
     description: To prevent from deleting or disabling resources in non-core accounts managed by AWS Landing Zone
     policy_file: policies/aws-landing-zone-non-core-mandatory-preventive-guardrails.json
