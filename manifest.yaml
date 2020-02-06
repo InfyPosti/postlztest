@@ -33,7 +33,7 @@ organizational_units:
             parameter_file: parameters/core_accounts/aws-landing-zone-notification.json
             deploy_method: stack_set
             # This SNS Topic needs to be deployed in eu-west-1 the regions where AWS Config service is enabled. (See baseline_resources: EnableConfig)
-            region:
+            regions:
               - eu-west-1
 
             ssm_parameters:
@@ -203,7 +203,7 @@ baseline_resources:
     template_file: templates/aws_baseline/aws-landing-zone-config-rules.template
     parameter_file: parameters/aws_baseline/aws-landing-zone-config-rules.json
     deploy_method: stack_set
-    region:
+    regions:
       - eu-west-1
 
   - name: EnableNotifications
