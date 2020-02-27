@@ -1,2 +1,2 @@
 # postlztest
-Infy test LZ in AISPL
+Infy test LZ in AISPL.
